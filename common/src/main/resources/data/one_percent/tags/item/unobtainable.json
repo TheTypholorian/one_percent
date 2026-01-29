@@ -1,0 +1,42 @@
+{
+  "values": [
+    "minecraft:barrier",
+    "minecraft:structure_void",
+    "minecraft:light",
+    "minecraft:impulse_command_block",
+    "minecraft:chain_command_block",
+    "minecraft:repeating_command_block",
+    "minecraft:structure_block",
+    "minecraft:jigsaw_block",
+    {
+      "value": "minecraft:test_instance_block",
+      "required": false
+    },
+    {
+      "value": "minecraft:test_block",
+      "required": false
+    },
+    "minecraft:petrified_oak_slab",
+    "minecraft:player_head",
+    "minecraft:bedrock",
+    "minecraft:reinforced_deepslate",
+    "minecraft:budding_amethyst",
+    "minecraft:chorus_plant",
+    "minecraft:dirt_path",
+    "minecraft:end_portal_frame",
+    "minecraft:farmland",
+    "minecraft:frogspawn",
+    "minecraft:infested_chiseled_stone_bricks",
+    "minecraft:infested_cracked_stone_bricks",
+    "minecraft:infested_cobblestone",
+    "minecraft:infested_deepslate",
+    "minecraft:infested_mossy_stone_bricks",
+    "minecraft:infested_stone",
+    "minecraft:infested_stone_bricks",
+    "minecraft:monster_spawner",
+    "minecraft:trial_spawner",
+    "minecraft:ominous_trial_spawner",
+    "minecraft:vault",
+    "minecraft:ominous_vault"
+  ]
+}
