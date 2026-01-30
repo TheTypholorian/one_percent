@@ -9,5 +9,6 @@
   "one_percent.time.seconds": "0:%s",
 
   "one_percent.start": "Picked [%s]",
+  "one_percent.start_set": "%s picked [%s]",
   "one_percent.win": "%s achieved [%s] in RTA %s, IGT %s"
 }

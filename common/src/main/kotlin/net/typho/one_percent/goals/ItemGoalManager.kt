@@ -3,6 +3,7 @@ package net.typho.one_percent.goals
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.SpawnEggItem
 import net.typho.one_percent.OnePercent.UNOBTAINABLE
 import kotlin.random.Random
@@ -28,6 +29,16 @@ object ItemGoalManager : GoalManager<ItemGoal> {
         goals.add(PotterySherdGoal)
 
         return goals.random(random)
+    }
+
+    fun itemToGoal(stack: ItemStack): ItemGoal {
+        return if (MusicDiscGoal.test(stack)) {
+            MusicDiscGoal
+        } else if (PotterySherdGoal.test(stack)) {
+            PotterySherdGoal
+        } else {
+            SingleItemGoal(stack.item)
+        }
     }
 
     override fun name(): Component = Component.translatable("one_percent.item_goal")

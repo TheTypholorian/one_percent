@@ -1,8 +1,12 @@
 package net.typho.one_percent.session
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.MapCodec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.ChatFormatting
-import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.typho.one_percent.goals.Goal
@@ -31,16 +35,20 @@ data class Session(
     }
 
     fun end(winner: Player) {
-        val message = getWinMessage(winner)
-
-        if (winner.level().isClientSide && Minecraft.getInstance().isSingleplayer) {
-            winner.displayClientMessage(message, false)
-        } else {
-            winner.level().server?.sendSystemMessage(message)
-        }
+        winner.level().server?.sendSystemMessage(getWinMessage(winner))
+        winner.level().playSound(winner, winner, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
     }
 
     companion object {
+        @JvmField
+        val CODEC: MapCodec<Session> = RecordCodecBuilder.mapCodec {
+            it.group(
+                Goal.CODEC.fieldOf("goal").forGetter { session -> session.goal },
+                Codec.LONG.fieldOf("startGameTime").forGetter { session -> session.startGameTime },
+                Codec.LONG.fieldOf("startIRLTime").forGetter { session -> session.startIRLTime },
+            ).apply(it, ::Session)
+        }
+
         @JvmStatic
         fun secondsToTime(seconds: Long): Component {
             val hours = seconds / 3600
