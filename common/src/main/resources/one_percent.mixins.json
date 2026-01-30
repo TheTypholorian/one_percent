@@ -4,10 +4,10 @@
   "package": "net.typho.one_percent.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
-  "mixins": [],
-  "client": [
-    "MixinMinecraft"
+  "mixins": [
+    "goals.PlayerMixin"
   ],
+  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

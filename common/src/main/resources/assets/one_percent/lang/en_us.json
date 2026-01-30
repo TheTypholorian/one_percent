@@ -1,5 +1,13 @@
 {
   "one_percent.music_disc": "Music Disc",
   "one_percent.pottery_sherd": "Pottery Sherd",
-  "one_percent.item_goal": "Random Item"
+
+  "one_percent.item_goal": "Random Item",
+
+  "one_percent.time.hours": "%s:%s:%s",
+  "one_percent.time.minutes": "%s:%s",
+  "one_percent.time.seconds": "0:%s",
+
+  "one_percent.start": "Picked [%s]",
+  "one_percent.win": "%s achieved [%s] in RTA %s, IGT %s"
 }
