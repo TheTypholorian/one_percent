@@ -6,9 +6,10 @@
   "compatibilityLevel": "JAVA_18",
   "mixins": [
     "goals.ServerPlayerMixin",
+    "goals.SmithingTemplateItemAccessor",
+    "session.PrimaryLevelDataMixin",
     "session.sync.GameProtocolsMixin",
-    "session.sync.PlayerListMixin",
-    "session.PrimaryLevelDataMixin"
+    "session.sync.PlayerListMixin"
   ],
   "client": [
     "session.GuiMixin",

@@ -35,6 +35,7 @@
     "minecraft:infested_stone_bricks",
     "minecraft:spawner",
     "minecraft:trial_spawner",
-    "minecraft:vault"
+    "minecraft:vault",
+    "minecraft:knowledge_book"
   ]
 }

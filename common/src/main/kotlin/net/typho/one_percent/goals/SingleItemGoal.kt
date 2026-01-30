@@ -4,14 +4,14 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.core.registries.Registries
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.SmithingTemplateItem
 import net.typho.one_percent.OnePercent
+import net.typho.one_percent.mixin.goals.SmithingTemplateItemAccessor
 
 data class SingleItemGoal(val item: Item) : ItemGoal {
     override fun test(stack: ItemStack) = stack.`is`(item)
@@ -20,7 +20,13 @@ data class SingleItemGoal(val item: Item) : ItemGoal {
 
     override fun getIcon(): ItemStack = item.defaultInstance
 
-    override fun getName(): Component = Component.translatable(item.descriptionId)
+    override fun getName(): Component {
+        return if (item is SmithingTemplateItem) {
+            (item as SmithingTemplateItemAccessor).upgradeDescription.plainCopy()
+        } else {
+            Component.translatable(item.descriptionId)
+        }
+    }
 
     override fun toString() = "SingleItemGoal[$item]"
 

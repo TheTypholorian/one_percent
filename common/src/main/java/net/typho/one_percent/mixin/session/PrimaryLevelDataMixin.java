@@ -7,9 +7,7 @@ import com.mojang.serialization.Dynamic;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.PrimaryLevelData;
-import net.typho.one_percent.goals.SingleItemGoal;
 import net.typho.one_percent.session.Session;
 import net.typho.one_percent.session.SessionStorage;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PrimaryLevelData.class)
 public class PrimaryLevelDataMixin implements SessionStorage {
     @Unique
-    private Session one_percent$session = new Session(new SingleItemGoal(Items.BARRIER), 500, 5000000L);
+    private Session one_percent$session;
 
     @Inject(
             method = "setTagData",

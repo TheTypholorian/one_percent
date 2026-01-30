@@ -5,21 +5,17 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.ChatFormatting
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
-import net.minecraft.network.protocol.Packet
 import net.minecraft.server.MinecraftServer
-import net.minecraft.sounds.SoundEvents
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.typho.one_percent.goals.Goal
 
 data class Session(
     @JvmField
-    val goal: Goal,
+    var goal: Goal,
     @JvmField
     val startGameTime: Long,
     @JvmField

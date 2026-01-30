@@ -9,21 +9,25 @@ import net.minecraft.commands.arguments.item.ItemArgument
 import net.minecraft.network.chat.Component
 import net.typho.one_percent.goals.ItemGoal
 import net.typho.one_percent.goals.ItemGoalManager
-import net.typho.one_percent.session.sync.ClientboundSyncSessionPacket
 import net.typho.one_percent.session.Session
 import net.typho.one_percent.session.SessionStorage
-import java.util.Optional
+import net.typho.one_percent.session.sync.ClientboundSyncSessionPacket
+import java.util.*
 import kotlin.random.Random
 
 object OnePercentFabric : ModInitializer {
     override fun onInitialize() {
         OnePercent.init()
         CommandRegistrationCallback.EVENT.register { dispatcher, context, selection ->
+            fun sync(context: CommandContext<CommandSourceStack>) {
+                context.source.server.playerList.broadcastAll(ClientboundSyncSessionPacket(Optional.ofNullable((context.source.server.worldData as SessionStorage).`one_percent$getSession`())))
+            }
+
             fun execute(item: ItemGoal, message: String, context: CommandContext<CommandSourceStack>) {
                 context.source.sendSuccess({ Component.translatable("one_percent.$message", context.source.player?.name, item.getName()) }, true)
                 val session = Session(item, context.source.level)
                 (context.source.server.worldData as SessionStorage).`one_percent$setSession`(session)
-                context.source.server.getPlayerList().broadcastAll(ClientboundSyncSessionPacket(Optional.of(session)))
+                sync(context)
             }
 
             dispatcher.register(
@@ -45,10 +49,22 @@ object OnePercentFabric : ModInitializer {
                             }
                     )
                     .then(
-                        Commands.argument("item", ItemArgument.item(context))
+                        Commands.literal("specific")
+                            .then(
+                                Commands.argument("item", ItemArgument.item(context))
+                                    .executes { context ->
+                                        val item = ItemGoalManager.itemToGoal(ItemArgument.getItem(context, "item").item.defaultInstance)
+                                        execute(item, "start_specific", context)
+                                        return@executes 1
+                                    }
+                            )
+                    )
+                    .then(
+                        Commands.literal("reroll")
+                            .requires { source -> (source.server.worldData as SessionStorage).`one_percent$getSession`() != null }
                             .executes { context ->
-                                val item = ItemGoalManager.itemToGoal(ItemArgument.getItem(context, "item").item.defaultInstance)
-                                execute(item, "start_specific", context)
+                                (context.source.server.worldData as SessionStorage).`one_percent$getSession`()?.goal = ItemGoalManager.pickGoal(context.source.level.registryAccess(), Random)
+                                sync(context)
                                 return@executes 1
                             }
                     )
