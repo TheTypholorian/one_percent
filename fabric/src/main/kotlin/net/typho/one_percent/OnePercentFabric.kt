@@ -4,7 +4,8 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.commands.Commands
 import net.minecraft.network.chat.Component
-import net.minecraft.util.RandomSource
+import net.typho.one_percent.goals.ItemGoalManager
+import kotlin.random.Random
 
 object OnePercentFabric : ModInitializer {
     override fun onInitialize() {
@@ -13,8 +14,14 @@ object OnePercentFabric : ModInitializer {
             dispatcher.register(
                 Commands.literal("one_percent")
                     .executes { context ->
-                        context.source.sendSuccess({ Component.literal("Picked ${OnePercent.pickRandomItem(context.source.level.registryAccess(), RandomSource.create())}") }, true)
-                        return@executes 1
+                        try {
+                            val item = ItemGoalManager.pickGoal(context.source.level.registryAccess(), Random)
+                            context.source.sendSuccess({ Component.literal("Picked $item") }, true)
+                            return@executes 1
+                        } catch (e: RuntimeException) {
+                            e.printStackTrace()
+                            throw e
+                        }
                     }
             )
         }
