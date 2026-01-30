@@ -3,8 +3,14 @@ package net.typho.one_percent.session
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import io.netty.buffer.ByteBuf
 import net.minecraft.ChatFormatting
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
+import net.minecraft.network.protocol.Packet
+import net.minecraft.server.MinecraftServer
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
 import net.minecraft.world.entity.player.Player
@@ -34,9 +40,10 @@ data class Session(
         )
     }
 
-    fun end(winner: Player) {
-        winner.level().server?.sendSystemMessage(getWinMessage(winner))
-        winner.level().playSound(winner, winner, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
+    fun end(winner: Player, server: MinecraftServer) {
+        server.playerList.broadcastSystemMessage(getWinMessage(winner), false)
+        // TODO impl sound
+        //winner.level().playSound(null, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
     }
 
     companion object {
@@ -48,6 +55,13 @@ data class Session(
                 Codec.LONG.fieldOf("startIRLTime").forGetter { session -> session.startIRLTime },
             ).apply(it, ::Session)
         }
+        @JvmField
+        val STREAM_CODEC: StreamCodec<ByteBuf, Session> = StreamCodec.composite(
+            Goal.STREAM_CODEC, { session -> session.goal },
+            ByteBufCodecs.VAR_LONG, { session -> session.startGameTime },
+            ByteBufCodecs.VAR_LONG, { session -> session.startIRLTime },
+            ::Session
+        )
 
         @JvmStatic
         fun secondsToTime(seconds: Long): Component {

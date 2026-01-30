@@ -5,11 +5,14 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
-    "goals.PlayerMixin",
+    "goals.ServerPlayerMixin",
+    "session.sync.GameProtocolsMixin",
+    "session.sync.PlayerListMixin",
     "session.PrimaryLevelDataMixin"
   ],
   "client": [
-    "session.GuiMixin"
+    "session.GuiMixin",
+    "session.sync.MinecraftMixin"
   ],
   "server": [],
   "injectors": {

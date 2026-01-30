@@ -1,9 +1,12 @@
 package net.typho.one_percent
 
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.protocol.PacketFlow
+import net.minecraft.network.protocol.PacketType
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
+import net.typho.one_percent.session.sync.ClientboundSyncSessionPacket
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
@@ -17,6 +20,8 @@ object OnePercent {
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_NAME)
     @JvmField
     val UNOBTAINABLE: TagKey<Item> = TagKey.create(Registries.ITEM, id("unobtainable"))
+    @JvmField
+    val CLIENTBOUND_SYNC_SESSION_PACKET = PacketType<ClientboundSyncSessionPacket>(PacketFlow.CLIENTBOUND, id("sync_session"))
 
     fun createDailyRandom(): Random = java.util.Random(LocalDate.now().toEpochDay()).asKotlinRandom()
 

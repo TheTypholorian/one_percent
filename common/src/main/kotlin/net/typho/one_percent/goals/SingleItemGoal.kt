@@ -2,8 +2,13 @@ package net.typho.one_percent.goals
 
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import io.netty.buffer.ByteBuf
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
+import net.minecraft.network.codec.ByteBufCodecs
+import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.typho.one_percent.OnePercent
@@ -28,5 +33,10 @@ data class SingleItemGoal(val item: Item) : ItemGoal {
                 BuiltInRegistries.ITEM.byNameCodec().fieldOf("item").forGetter { goal -> goal.item }
             ).apply(it, ::SingleItemGoal)
         }
+        @JvmField
+        val STREAM_CODEC: StreamCodec<ByteBuf, SingleItemGoal> = StreamCodec.composite(
+            ByteBufCodecs.fromCodecTrusted(BuiltInRegistries.ITEM.byNameCodec()), { goal -> goal.item },
+            ::SingleItemGoal
+        )
     }
 }

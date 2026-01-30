@@ -8,7 +8,8 @@
   "one_percent.time.minutes": "%s:%s",
   "one_percent.time.seconds": "0:%s",
 
-  "one_percent.start": "Picked [%s]",
-  "one_percent.start_set": "%s picked [%s]",
+  "one_percent.start_daily": "%s started daily! Get %s",
+  "one_percent.start_random": "%s started random! Get %s",
+  "one_percent.start_specific": "%s started a specific thing! Get %s",
   "one_percent.win": "%s achieved [%s] in RTA %s, IGT %s"
 }
