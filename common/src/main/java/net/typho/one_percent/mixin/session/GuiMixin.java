@@ -8,7 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.typho.one_percent.session.Session;
 import net.typho.one_percent.session.SessionStorage;
@@ -74,18 +73,14 @@ public abstract class GuiMixin {
                     .sorted(Comparator.comparingInt(Map.Entry::getValue))
                     .forEachOrdered(entry -> {
                         if (entry.getValue() > 0) {
-                            Player player = minecraft.level.getPlayerByUUID(UUID.fromString(entry.getKey()));
-
-                            if (player != null) {
-                                guiGraphics.drawString(
-                                        getFont(),
-                                        Component.translatable("one_percent.score", player.getDisplayName(), entry.getValue()),
-                                        4 * 2,
-                                        textY.get(),
-                                        0xFFFFFFFF
-                                );
-                                textY.addAndGet(getFont().lineHeight * 2);
-                            }
+                            guiGraphics.drawString(
+                                    getFont(),
+                                    Component.translatable("one_percent.score", minecraft.getConnection().getPlayerInfo(UUID.fromString(entry.getKey())).getTabListDisplayName(), entry.getValue()),
+                                    4 * 2,
+                                    textY.get(),
+                                    0xFFFFFFFF
+                            );
+                            textY.addAndGet(getFont().lineHeight);
                         }
                     });
         }

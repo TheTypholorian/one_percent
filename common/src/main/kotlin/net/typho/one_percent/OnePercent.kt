@@ -69,6 +69,7 @@ object OnePercent {
 
         dispatcher.register(
             Commands.literal("one_percent")
+                .requires { context -> context.hasPermission(4) }
                 .then(
                     Commands.literal("daily")
                         .executes { context ->
