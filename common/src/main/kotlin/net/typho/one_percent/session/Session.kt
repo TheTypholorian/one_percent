@@ -72,7 +72,7 @@ class Session(
             server.playerList.broadcastSystemMessage(if (won) getWinMessage(winner) else getPointMessage(winner, score), false)
 
             alreadyPicked.add(goal)
-            goal = goal.getManager().pickGoal(server.registryAccess(), Random(seed!!), alreadyPicked)
+            goal = goal.getManager().getAllGoals(server.registryAccess(), alreadyPicked).random(Random(seed!!))
 
             return won
         } else {

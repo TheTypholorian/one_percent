@@ -72,7 +72,7 @@ object OnePercent {
                 .then(
                     Commands.literal("daily")
                         .executes { context ->
-                            val item = ItemGoalManager.pickGoal(context.source.level.registryAccess(), createDailyRandom())
+                            val item = ItemGoalManager.getAllGoals(context.source.level.registryAccess()).random(createDailyRandom())
                             execute(item, "start_daily", context)
                             return@executes 1
                         }
@@ -80,7 +80,7 @@ object OnePercent {
                 .then(
                     Commands.literal("random")
                         .executes { context ->
-                            val item = ItemGoalManager.pickGoal(context.source.level.registryAccess(), Random)
+                            val item = ItemGoalManager.getAllGoals(context.source.level.registryAccess()).random()
                             execute(item, "start_random", context)
                             return@executes 1
                         }
@@ -98,17 +98,18 @@ object OnePercent {
                 )
                 .then(
                     Commands.literal("reroll")
-                        .requires { source -> (source.server.worldData as SessionStorage).`one_percent$getSession`() != null }
                         .executes { context ->
                             val session = (context.source.server.worldData as SessionStorage).`one_percent$getSession`()
-                            session?.goal = ItemGoalManager.pickGoal(context.source.level.registryAccess(), Random, session.alreadyPicked)
+                            session?.goal = ItemGoalManager.getAllGoals(
+                                context.source.level.registryAccess(),
+                                session.alreadyPicked
+                            ).random()
                             sync(context)
                             return@executes 1
                         }
                 )
                 .then(
                     Commands.literal("set_score")
-                        .requires { source -> (source.server.worldData as SessionStorage).`one_percent$getSession`() != null }
                         .then(
                             Commands.argument("target", EntityArgument.player())
                                 .then(

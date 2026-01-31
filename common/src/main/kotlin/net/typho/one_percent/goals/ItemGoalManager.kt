@@ -3,16 +3,12 @@ package net.typho.one_percent.goals
 import net.minecraft.core.RegistryAccess
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.PotionItem
-import net.minecraft.world.item.SpawnEggItem
-import net.minecraft.world.item.TippedArrowItem
+import net.minecraft.world.item.*
 import net.typho.one_percent.OnePercent.UNOBTAINABLE
 import net.typho.one_percent.mixin.goals.PotionAccessor
-import kotlin.random.Random
 
 object ItemGoalManager : GoalManager<ItemGoal> {
-    override fun pickGoal(registries: RegistryAccess, random: Random, alreadyPicked: Collection<Goal>): ItemGoal {
+    override fun getAllGoals(registries: RegistryAccess, alreadyPicked: Collection<Goal>): Collection<ItemGoal> {
         val goals = ArrayList(
             BuiltInRegistries.ITEM.stream()
                 .filter { item ->
@@ -20,6 +16,7 @@ object ItemGoalManager : GoalManager<ItemGoal> {
                         .orElseThrow()
                         .any { holder -> holder.value() == item }
                 }
+                .filter { item -> item != Items.AIR }
                 .filter { item -> item !is SpawnEggItem }
                 .filter { item -> item !is PotionItem }
                 .filter { item -> item !is TippedArrowItem }
@@ -40,9 +37,9 @@ object ItemGoalManager : GoalManager<ItemGoal> {
         goals.add(MusicDiscGoal)
         goals.add(PotterySherdGoal)
 
-        goals.removeAll(alreadyPicked)
+        goals.removeAll(alreadyPicked.toSet())
 
-        return goals.random(random)
+        return goals
     }
 
     fun itemToGoal(stack: ItemStack): ItemGoal {
