@@ -32,7 +32,7 @@ object ItemGoalManager : GoalManager<ItemGoal> {
         for (potion in BuiltInRegistries.POTION) {
             val name = (potion as PotionAccessor).name
 
-            if (!name.startsWith("long_") && !name.startsWith("strong_")) {
+            if (name == null || !name.startsWith("long_") && !name.startsWith("strong_")) {
                 goals.add(PotionGoal(potion))
             }
         }
