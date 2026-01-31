@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Objects;
 
 @Mixin(Gui.class)
@@ -60,6 +62,14 @@ public abstract class GuiMixin {
 
             guiGraphics.drawString(getFont(), irl, textX * 2, 18 * 2, Objects.requireNonNull(ChatFormatting.AQUA.getColor()));
             guiGraphics.drawString(getFont(), game, textX * 2 + getFont().width(irl) + 4, 18 * 2, Objects.requireNonNull(ChatFormatting.YELLOW.getColor()));
+
+            int textY = 18 * 2 + getFont().lineHeight * 2;
+
+            session.scores.entrySet().stream()
+                    .sorted(Comparator.comparingInt(Map.Entry::getValue))
+                    .forEachOrdered(entry -> {
+                        guiGraphics.drawString(getFont(), Component.translatable("one_percent.score", minecraft.level.getPlayerByUUID(entry.getKey()).getDisplayName(), entry.getValue()), 4 * 2, textY, 0xFFFFFFFF);
+                    });
         }
     }
 }

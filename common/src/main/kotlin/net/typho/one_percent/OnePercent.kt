@@ -8,6 +8,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.GameRules
 import net.typho.one_percent.mixin.session.GameRulesAccessor
+import net.typho.one_percent.mixin.session.GameRulesIntegerValueAccessor
 import net.typho.one_percent.session.sync.ClientboundSyncSessionPacket
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -31,7 +32,7 @@ object OnePercent {
     val REQUIRED_SCORE: GameRules.Key<GameRules.IntegerValue> = GameRulesAccessor.register(
         "one_percent_required_score",
         GameRules.Category.MISC,
-        GameRulesAccessor.IntegerValue.create(10)
+        GameRulesIntegerValueAccessor.create(5)
     )
 
     fun createDailyRandom(): Random = java.util.Random(LocalDate.now().toEpochDay()).asKotlinRandom()

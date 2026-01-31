@@ -11,6 +11,8 @@
   "one_percent.start_daily": "%s started daily! Get %s",
   "one_percent.start_random": "%s started random! Get %s",
   "one_percent.start_specific": "%s started a specific thing! Get %s",
-  "one_percent.win": "%s achieved [%s] in RTA %s, IGT %s",
-  "one_percent.objective": "Objective:"
+  "one_percent.win": "%s won!",
+  "one_percent.point": "%s achieved [%s] in RTA %s, IGT %s",
+  "one_percent.objective": "Objective:",
+  "one_percent.score": "%s: %s"
 }

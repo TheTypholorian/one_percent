@@ -1,5 +1,6 @@
 package net.typho.one_percent.mixin.goals;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +33,11 @@ public class ServerPlayerMixin {
 
         if (session != null) {
             if (session.goal.test(player)) {
-                if (session.win(player, server)) {
+                if (session.point(player, server)) {
+                    if (!session.scores.isEmpty()) {
+                        server.getPlayerList().broadcastSystemMessage(Component.translatable("one_percent.win", player.getName()), false);
+                    }
+
                     storage.one_percent$setSession(null);
                 }
 

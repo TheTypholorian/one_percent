@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.ChatFormatting
+import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
@@ -33,7 +34,7 @@ data class Session(
         val deltaIRLTime = System.currentTimeMillis() - startIRLTime
 
         return Component.translatable(
-            "one_percent.win",
+            "one_percent.point",
             winner.name,
             goal.getName(),
             secondsToTime(deltaIRLTime / 1000).copy().withStyle(ChatFormatting.AQUA),
@@ -41,7 +42,7 @@ data class Session(
         )
     }
 
-    fun win(winner: Player, server: MinecraftServer): Boolean {
+    fun point(winner: Player, server: MinecraftServer): Boolean {
         server.playerList.broadcastSystemMessage(getWinMessage(winner), false)
         // TODO impl sound
         //winner.level().playSound(null, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
@@ -66,6 +67,7 @@ data class Session(
                 Goal.CODEC.fieldOf("goal").forGetter { session -> session.goal },
                 Codec.LONG.fieldOf("startGameTime").forGetter { session -> session.startGameTime },
                 Codec.LONG.fieldOf("startIRLTime").forGetter { session -> session.startIRLTime },
+                Codec.unboundedMap(UUIDUtil.CODEC, Codec.INT).fieldOf("scores").forGetter { session -> session.scores }
             ).apply(it, ::Session)
         }
         @JvmField
@@ -73,6 +75,7 @@ data class Session(
             Goal.STREAM_CODEC, { session -> session.goal },
             ByteBufCodecs.VAR_LONG, { session -> session.startGameTime },
             ByteBufCodecs.VAR_LONG, { session -> session.startIRLTime },
+            ByteBufCodecs.map(::HashMap, UUIDUtil.STREAM_CODEC, ByteBufCodecs.VAR_INT), { session -> session.scores },
             ::Session
         )
 
