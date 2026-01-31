@@ -5,12 +5,14 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
+    "commands.CommandsMixin",
     "goals.PotionAccessor",
     "goals.ServerPlayerMixin",
     "goals.SmithingTemplateItemAccessor",
     "session.GameRulesAccessor",
     "session.GameRulesIntegerValueAccessor",
-    "session.PrimaryLevelDataMixin",
+    "session.save.MinecraftServerAccessor",
+    "session.save.PrimaryLevelDataMixin",
     "session.sync.GameProtocolsMixin",
     "session.sync.PlayerListMixin"
   ],

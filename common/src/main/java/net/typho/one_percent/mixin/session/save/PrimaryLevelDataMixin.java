@@ -1,4 +1,4 @@
-package net.typho.one_percent.mixin.session;
+package net.typho.one_percent.mixin.session.save;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -28,7 +28,7 @@ public class PrimaryLevelDataMixin implements SessionStorage {
     )
     private void setTagData(RegistryAccess registry, CompoundTag nbt, CompoundTag playerNBT, CallbackInfo ci) {
         if (one_percent$session != null) {
-            nbt.put("OnePercentSession", Session.CODEC.codec().encodeStart(NbtOps.INSTANCE, one_percent$session).getOrThrow());
+            nbt.put("OnePercentSession", Session.CODEC.encodeStart(NbtOps.INSTANCE, one_percent$session).getOrThrow());
         }
     }
 
@@ -43,7 +43,7 @@ public class PrimaryLevelDataMixin implements SessionStorage {
         DataResult<Dynamic<T>> session = tag.get("OnePercentSession").get();
 
         if (session.isSuccess()) {
-            ((SessionStorage) original).one_percent$setSession(Session.CODEC.codec().decode(session.getOrThrow()).getOrThrow().getFirst());
+            ((SessionStorage) original).one_percent$setSession(Session.CODEC.decode(session.getOrThrow()).getOrThrow().getFirst());
         }
 
         return original;

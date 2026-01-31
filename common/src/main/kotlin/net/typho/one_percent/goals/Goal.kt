@@ -1,5 +1,6 @@
 package net.typho.one_percent.goals
 
+import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import io.netty.buffer.ByteBuf
 import net.minecraft.network.chat.Component
@@ -25,7 +26,7 @@ interface Goal {
         @JvmField
         val STREAM_CODEC_MAP = HashMap<ResourceLocation, StreamCodec<ByteBuf, out Goal>>()
         @JvmField
-        val CODEC: MapCodec<Goal> = ResourceLocation.CODEC.dispatchMap(
+        val CODEC: Codec<Goal> = ResourceLocation.CODEC.dispatch(
             { goal -> goal.type() },
             { type -> CODEC_MAP[type] }
         )

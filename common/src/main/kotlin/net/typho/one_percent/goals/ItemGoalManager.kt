@@ -12,7 +12,7 @@ import net.typho.one_percent.mixin.goals.PotionAccessor
 import kotlin.random.Random
 
 object ItemGoalManager : GoalManager<ItemGoal> {
-    override fun pickGoal(registries: RegistryAccess, random: Random): ItemGoal {
+    override fun pickGoal(registries: RegistryAccess, random: Random, alreadyPicked: Collection<Goal>): ItemGoal {
         val goals = ArrayList(
             BuiltInRegistries.ITEM.stream()
                 .filter { item ->
@@ -39,6 +39,8 @@ object ItemGoalManager : GoalManager<ItemGoal> {
 
         goals.add(MusicDiscGoal)
         goals.add(PotterySherdGoal)
+
+        goals.removeAll(alreadyPicked)
 
         return goals.random(random)
     }

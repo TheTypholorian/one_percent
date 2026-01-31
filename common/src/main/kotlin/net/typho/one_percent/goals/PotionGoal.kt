@@ -13,7 +13,7 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.alchemy.Potion
 import net.minecraft.world.item.alchemy.PotionContents
 import net.typho.one_percent.OnePercent
-import java.util.Optional
+import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 class PotionGoal(val potion: Potion) : ItemGoal {
@@ -30,6 +30,19 @@ class PotionGoal(val potion: Potion) : ItemGoal {
     override fun getName(): Component = Component.translatable(Potion.getName(Optional.of(BuiltInRegistries.POTION.wrapAsHolder(potion)), "item.minecraft.potion.effect."))
 
     override fun toString() = "PotionGoal[${BuiltInRegistries.POTION.getKey(potion)}]"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PotionGoal
+
+        return potion == other.potion
+    }
+
+    override fun hashCode(): Int {
+        return potion.hashCode()
+    }
 
     companion object {
         @JvmField

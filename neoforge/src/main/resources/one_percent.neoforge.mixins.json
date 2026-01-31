@@ -4,9 +4,7 @@
   "package": "net.typho.one_percent.mixin.neoforge",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
-  "client": [
-    "MixinTitleScreen"
-  ],
+  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

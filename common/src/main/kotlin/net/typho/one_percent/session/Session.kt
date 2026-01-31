@@ -1,33 +1,37 @@
 package net.typho.one_percent.session
 
 import com.mojang.serialization.Codec
-import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.ChatFormatting
-import net.minecraft.core.UUIDUtil
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.server.MinecraftServer
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.level.Level
 import net.typho.one_percent.OnePercent
 import net.typho.one_percent.goals.Goal
-import java.util.*
 import kotlin.random.Random
 
-data class Session(
+class Session(
     @JvmField
     var goal: Goal,
     @JvmField
     var startGameTime: Long,
     @JvmField
     var startIRLTime: Long,
+    scores: Map<String, Int> = emptyMap(),
+    alreadyPicked: Collection<Goal> = emptySet(),
     @JvmField
-    val scores: MutableMap<UUID, Int> = HashMap()
+    val seed: Long? = null,
 ) {
-    constructor(goal: Goal, level: Level) : this(goal, level.gameTime, System.currentTimeMillis())
+    @JvmField
+    val scores = HashMap(scores)
+    @JvmField
+    val alreadyPicked = ArrayList(alreadyPicked)
+
+    constructor(goal: Goal, level: ServerLevel) : this(goal, level.gameTime, System.currentTimeMillis(), seed = Random.nextLong())
 
     fun getWinMessage(winner: Player): Component {
         val deltaGameTime = winner.level().gameTime - startGameTime
@@ -47,27 +51,30 @@ data class Session(
         // TODO impl sound
         //winner.level().playSound(null, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
 
-        if (server.playerList.playerCount > 1 || scores.isNotEmpty()) {
+        //if (server.playerList.playerCount > 1 || scores.isNotEmpty()) {
+            alreadyPicked.add(goal)
             startGameTime = server.overworld().gameTime
             startIRLTime = System.currentTimeMillis()
-            goal = goal.getManager().pickGoal(server.registryAccess(), Random)
+            goal = goal.getManager().pickGoal(server.registryAccess(), Random(seed!!), alreadyPicked)
 
-            val score = scores.compute(winner.uuid) { key, value -> (value ?: 0) + 1 }
+            val score = scores.compute(winner.stringUUID) { key, value -> (value ?: 0) + 1 }
 
             return (score ?: 0) >= server.gameRules.getInt(OnePercent.REQUIRED_SCORE)
-        }
+        //}
 
-        return true
+        //return true
     }
 
     companion object {
         @JvmField
-        val CODEC: MapCodec<Session> = RecordCodecBuilder.mapCodec {
+        val CODEC: Codec<Session> = RecordCodecBuilder.create {
             it.group(
                 Goal.CODEC.fieldOf("goal").forGetter { session -> session.goal },
                 Codec.LONG.fieldOf("startGameTime").forGetter { session -> session.startGameTime },
                 Codec.LONG.fieldOf("startIRLTime").forGetter { session -> session.startIRLTime },
-                Codec.unboundedMap(UUIDUtil.CODEC, Codec.INT).fieldOf("scores").forGetter { session -> session.scores }
+                Codec.unboundedMap(Codec.STRING, Codec.INT).fieldOf("scores").forGetter { session -> session.scores },
+                Codec.list(Goal.CODEC).optionalFieldOf("alreadyPicked", listOf()).forGetter { session -> session.alreadyPicked },
+                Codec.LONG.fieldOf("seed").forGetter { session -> session.seed }
             ).apply(it, ::Session)
         }
         @JvmField
@@ -75,7 +82,7 @@ data class Session(
             Goal.STREAM_CODEC, { session -> session.goal },
             ByteBufCodecs.VAR_LONG, { session -> session.startGameTime },
             ByteBufCodecs.VAR_LONG, { session -> session.startIRLTime },
-            ByteBufCodecs.map(::HashMap, UUIDUtil.STREAM_CODEC, ByteBufCodecs.VAR_INT), { session -> session.scores },
+            ByteBufCodecs.map(::HashMap, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.VAR_INT), { session -> session.scores },
             ::Session
         )
 

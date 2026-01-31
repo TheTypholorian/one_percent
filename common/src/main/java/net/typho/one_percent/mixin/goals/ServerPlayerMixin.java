@@ -41,6 +41,7 @@ public class ServerPlayerMixin {
                     storage.one_percent$setSession(null);
                 }
 
+                SessionStorage.saveSession(server);
                 server.getPlayerList().broadcastAll(new ClientboundSyncSessionPacket(Optional.ofNullable(storage.one_percent$getSession())));
             }
         }
