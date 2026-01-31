@@ -33,7 +33,7 @@ class Session(
     @JvmField
     val alreadyPicked = ArrayList(alreadyPicked)
 
-    constructor(goal: Goal, level: ServerLevel) : this(level.server.playerCount > 0, goal, level.gameTime, System.currentTimeMillis(), seed = Random.nextLong())
+    constructor(goal: Goal, level: ServerLevel) : this(level.server.playerCount > 1, goal, level.gameTime, System.currentTimeMillis(), seed = Random.nextLong())
 
     fun getWinMessage(winner: Player): Component {
         if (multiplayer) {
