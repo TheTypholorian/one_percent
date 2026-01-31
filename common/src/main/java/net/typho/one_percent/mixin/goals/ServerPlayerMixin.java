@@ -1,6 +1,5 @@
 package net.typho.one_percent.mixin.goals;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -31,19 +30,13 @@ public class ServerPlayerMixin {
         SessionStorage storage = (SessionStorage) server.getWorldData();
         Session session = storage.one_percent$getSession();
 
-        if (session != null) {
-            if (session.goal.test(player)) {
-                if (session.point(player, server)) {
-                    if (!session.scores.isEmpty()) {
-                        server.getPlayerList().broadcastSystemMessage(Component.translatable("one_percent.win", player.getName()), false);
-                    }
-
-                    storage.one_percent$setSession(null);
-                }
-
-                SessionStorage.saveSession(server);
-                server.getPlayerList().broadcastAll(new ClientboundSyncSessionPacket(Optional.ofNullable(storage.one_percent$getSession())));
+        if (session != null && session.goal.test(player)) {
+            if (session.point(player, server)) {
+                storage.one_percent$setSession(null);
             }
+
+            SessionStorage.saveSession(server);
+            server.getPlayerList().broadcastAll(new ClientboundSyncSessionPacket(Optional.ofNullable(storage.one_percent$getSession())));
         }
     }
 }

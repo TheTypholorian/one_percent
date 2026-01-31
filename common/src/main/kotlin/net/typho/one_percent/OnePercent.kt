@@ -72,7 +72,7 @@ object OnePercent {
                 .then(
                     Commands.literal("daily")
                         .executes { context ->
-                            val item = ItemGoalManager.pickGoal(context.source.level.registryAccess(), OnePercent.createDailyRandom())
+                            val item = ItemGoalManager.pickGoal(context.source.level.registryAccess(), createDailyRandom())
                             execute(item, "start_daily", context)
                             return@executes 1
                         }

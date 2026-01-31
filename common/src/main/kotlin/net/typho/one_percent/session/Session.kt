@@ -16,11 +16,13 @@ import kotlin.random.Random
 
 class Session(
     @JvmField
+    val multiplayer: Boolean,
+    @JvmField
     var goal: Goal,
     @JvmField
-    var startGameTime: Long,
+    val startGameTime: Long,
     @JvmField
-    var startIRLTime: Long,
+    val startIRLTime: Long,
     scores: Map<String, Int> = emptyMap(),
     alreadyPicked: Collection<Goal> = emptySet(),
     @JvmField
@@ -31,44 +33,60 @@ class Session(
     @JvmField
     val alreadyPicked = ArrayList(alreadyPicked)
 
-    constructor(goal: Goal, level: ServerLevel) : this(goal, level.gameTime, System.currentTimeMillis(), seed = Random.nextLong())
+    constructor(goal: Goal, level: ServerLevel) : this(level.server.playerCount > 0, goal, level.gameTime, System.currentTimeMillis(), seed = Random.nextLong())
 
     fun getWinMessage(winner: Player): Component {
-        val deltaGameTime = winner.level().gameTime - startGameTime
-        val deltaIRLTime = System.currentTimeMillis() - startIRLTime
+        if (multiplayer) {
+            return Component.translatable(
+                "one_percent.win",
+                winner.name
+            )
+        } else {
+            val deltaGameTime = winner.level().gameTime - startGameTime
+            val deltaIRLTime = System.currentTimeMillis() - startIRLTime
 
+            return Component.translatable(
+                "one_percent.win_singleplayer",
+                winner.name,
+                goal.getName(),
+                secondsToTime(deltaIRLTime / 1000).copy().withStyle(ChatFormatting.AQUA),
+                secondsToTime(deltaGameTime / 20).copy().withStyle(ChatFormatting.YELLOW)
+            )
+        }
+    }
+
+    fun getPointMessage(winner: Player, score: Int): Component {
         return Component.translatable(
             "one_percent.point",
             winner.name,
             goal.getName(),
-            secondsToTime(deltaIRLTime / 1000).copy().withStyle(ChatFormatting.AQUA),
-            secondsToTime(deltaGameTime / 20).copy().withStyle(ChatFormatting.YELLOW)
+            score
         )
     }
 
     fun point(winner: Player, server: MinecraftServer): Boolean {
-        server.playerList.broadcastSystemMessage(getWinMessage(winner), false)
-        // TODO impl sound
-        //winner.level().playSound(null, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
+        if (multiplayer) {
+            val score = scores.compute(winner.stringUUID) { key, value -> (value ?: 0) + 1 }!!
+            val won = score >= server.gameRules.getInt(OnePercent.REQUIRED_SCORE)
 
-        //if (server.playerList.playerCount > 1 || scores.isNotEmpty()) {
+            server.playerList.broadcastSystemMessage(if (won) getWinMessage(winner) else getPointMessage(winner, score), false)
+
             alreadyPicked.add(goal)
-            startGameTime = server.overworld().gameTime
-            startIRLTime = System.currentTimeMillis()
             goal = goal.getManager().pickGoal(server.registryAccess(), Random(seed!!), alreadyPicked)
 
-            val score = scores.compute(winner.stringUUID) { key, value -> (value ?: 0) + 1 }
+            return won
+        } else {
+            server.playerList.broadcastSystemMessage(getWinMessage(winner), false)
 
-            return (score ?: 0) >= server.gameRules.getInt(OnePercent.REQUIRED_SCORE)
-        //}
-
-        //return true
+            return true
+        }
     }
 
     companion object {
         @JvmField
         val CODEC: Codec<Session> = RecordCodecBuilder.create {
             it.group(
+                Codec.BOOL.fieldOf("multiplayer").forGetter { session -> session.multiplayer },
                 Goal.CODEC.fieldOf("goal").forGetter { session -> session.goal },
                 Codec.LONG.fieldOf("startGameTime").forGetter { session -> session.startGameTime },
                 Codec.LONG.fieldOf("startIRLTime").forGetter { session -> session.startIRLTime },
@@ -79,6 +97,7 @@ class Session(
         }
         @JvmField
         val STREAM_CODEC: StreamCodec<ByteBuf, Session> = StreamCodec.composite(
+            ByteBufCodecs.BOOL, { session -> session.multiplayer },
             Goal.STREAM_CODEC, { session -> session.goal },
             ByteBufCodecs.VAR_LONG, { session -> session.startGameTime },
             ByteBufCodecs.VAR_LONG, { session -> session.startIRLTime },

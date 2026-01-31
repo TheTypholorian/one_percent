@@ -59,11 +59,13 @@ public abstract class GuiMixin {
 
             guiGraphics.drawString(getFont(), Component.translatable("one_percent.objective").withStyle(ChatFormatting.BOLD), textX * 2, 4 * 2, Objects.requireNonNull(ChatFormatting.YELLOW.getColor()));
 
-            Component irl = Session.secondsToTime((System.currentTimeMillis() - session.startIRLTime) / 1000);
-            Component game = Session.secondsToTime((minecraft.level.getGameTime() - session.startGameTime) / 20);
+            if (!session.multiplayer) {
+                Component irl = Session.secondsToTime((System.currentTimeMillis() - session.startIRLTime) / 1000);
+                Component game = Session.secondsToTime((minecraft.level.getGameTime() - session.startGameTime) / 20);
 
-            guiGraphics.drawString(getFont(), irl, textX * 2, 18 * 2, Objects.requireNonNull(ChatFormatting.AQUA.getColor()));
-            guiGraphics.drawString(getFont(), game, textX * 2 + getFont().width(irl) + 4, 18 * 2, Objects.requireNonNull(ChatFormatting.YELLOW.getColor()));
+                guiGraphics.drawString(getFont(), irl, textX * 2, 18 * 2, Objects.requireNonNull(ChatFormatting.AQUA.getColor()));
+                guiGraphics.drawString(getFont(), game, textX * 2 + getFont().width(irl) + 4, 18 * 2, Objects.requireNonNull(ChatFormatting.YELLOW.getColor()));
+            }
 
             int textY = 18 * 2 + getFont().lineHeight * 2;
 

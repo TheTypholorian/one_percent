@@ -12,7 +12,8 @@
   "one_percent.start_random": "%s started random! Get %s",
   "one_percent.start_specific": "%s started a specific thing! Get %s",
   "one_percent.win": "%s won!",
-  "one_percent.point": "%s achieved [%s] in RTA %s, IGT %s",
+  "one_percent.win_singleplayer": "%s achieved [%s] in RTA %s, IGT %s",
+  "one_percent.point": "%s achieved [%s], they are now at %s points",
   "one_percent.objective": "Objective:",
   "one_percent.score": "%s: %s",
   "one_percent.set_score": "Set score of %s to %s"
