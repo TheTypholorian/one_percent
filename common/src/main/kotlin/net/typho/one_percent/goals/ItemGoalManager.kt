@@ -6,7 +6,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.PotionItem
 import net.minecraft.world.item.SpawnEggItem
+import net.minecraft.world.item.TippedArrowItem
 import net.typho.one_percent.OnePercent.UNOBTAINABLE
+import net.typho.one_percent.mixin.goals.PotionAccessor
 import kotlin.random.Random
 
 object ItemGoalManager : GoalManager<ItemGoal> {
@@ -20,6 +22,7 @@ object ItemGoalManager : GoalManager<ItemGoal> {
                 }
                 .filter { item -> item !is SpawnEggItem }
                 .filter { item -> item !is PotionItem }
+                .filter { item -> item !is TippedArrowItem }
                 .filter { item -> !MusicDiscGoal.test(item.defaultInstance) }
                 .filter { item -> !PotterySherdGoal.test(item.defaultInstance) }
                 .map<ItemGoal>(::SingleItemGoal)
@@ -27,7 +30,11 @@ object ItemGoalManager : GoalManager<ItemGoal> {
         )
 
         for (potion in BuiltInRegistries.POTION) {
-            goals.add(PotionGoal(potion))
+            val name = (potion as PotionAccessor).name
+
+            if (!name.startsWith("long_") && !name.startsWith("strong_")) {
+                goals.add(PotionGoal(potion))
+            }
         }
 
         goals.add(MusicDiscGoal)
