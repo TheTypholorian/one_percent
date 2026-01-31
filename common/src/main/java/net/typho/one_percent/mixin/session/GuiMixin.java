@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Mixin(Gui.class)
 public abstract class GuiMixin {
@@ -67,21 +68,24 @@ public abstract class GuiMixin {
                 guiGraphics.drawString(getFont(), game, textX * 2 + getFont().width(irl) + 4, 18 * 2, Objects.requireNonNull(ChatFormatting.YELLOW.getColor()));
             }
 
-            int textY = 18 * 2 + getFont().lineHeight * 2;
+            AtomicInteger textY = new AtomicInteger(18 * 2 + getFont().lineHeight * 2);
 
             session.scores.entrySet().stream()
                     .sorted(Comparator.comparingInt(Map.Entry::getValue))
                     .forEachOrdered(entry -> {
-                        Player player = minecraft.level.getPlayerByUUID(UUID.fromString(entry.getKey()));
+                        if (entry.getValue() > 0) {
+                            Player player = minecraft.level.getPlayerByUUID(UUID.fromString(entry.getKey()));
 
-                        if (player != null) {
-                            guiGraphics.drawString(
-                                    getFont(),
-                                    Component.translatable("one_percent.score", player.getDisplayName(), entry.getValue()),
-                                    4 * 2,
-                                    textY,
-                                    0xFFFFFFFF
-                            );
+                            if (player != null) {
+                                guiGraphics.drawString(
+                                        getFont(),
+                                        Component.translatable("one_percent.score", player.getDisplayName(), entry.getValue()),
+                                        4 * 2,
+                                        textY.get(),
+                                        0xFFFFFFFF
+                                );
+                                textY.addAndGet(getFont().lineHeight * 2);
+                            }
                         }
                     });
         }
