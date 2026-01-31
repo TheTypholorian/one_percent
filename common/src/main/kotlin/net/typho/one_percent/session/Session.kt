@@ -11,15 +11,20 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.server.MinecraftServer
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
+import net.typho.one_percent.OnePercent
 import net.typho.one_percent.goals.Goal
+import java.util.*
+import kotlin.random.Random
 
 data class Session(
     @JvmField
     var goal: Goal,
     @JvmField
-    val startGameTime: Long,
+    var startGameTime: Long,
     @JvmField
-    val startIRLTime: Long
+    var startIRLTime: Long,
+    @JvmField
+    val scores: MutableMap<UUID, Int> = HashMap()
 ) {
     constructor(goal: Goal, level: Level) : this(goal, level.gameTime, System.currentTimeMillis())
 
@@ -36,10 +41,22 @@ data class Session(
         )
     }
 
-    fun end(winner: Player, server: MinecraftServer) {
+    fun win(winner: Player, server: MinecraftServer): Boolean {
         server.playerList.broadcastSystemMessage(getWinMessage(winner), false)
         // TODO impl sound
         //winner.level().playSound(null, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.MASTER, 1f, 1f)
+
+        if (server.playerList.playerCount > 1 || scores.isNotEmpty()) {
+            startGameTime = server.overworld().gameTime
+            startIRLTime = System.currentTimeMillis()
+            goal = goal.getManager().pickGoal(server.registryAccess(), Random)
+
+            val score = scores.compute(winner.uuid) { key, value -> (value ?: 0) + 1 }
+
+            return (score ?: 0) >= server.gameRules.getInt(OnePercent.REQUIRED_SCORE)
+        }
+
+        return true
     }
 
     companion object {

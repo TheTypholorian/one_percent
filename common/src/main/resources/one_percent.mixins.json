@@ -7,6 +7,8 @@
   "mixins": [
     "goals.ServerPlayerMixin",
     "goals.SmithingTemplateItemAccessor",
+    "session.GameRulesAccessor",
+    "session.GameRulesAccessor$IntegerValue",
     "session.PrimaryLevelDataMixin",
     "session.sync.GameProtocolsMixin",
     "session.sync.PlayerListMixin"

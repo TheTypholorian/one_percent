@@ -2,7 +2,6 @@ package net.typho.one_percent.goals
 
 import com.mojang.serialization.MapCodec
 import io.netty.buffer.ByteBuf
-import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.chat.Component
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.ResourceLocation
@@ -17,6 +16,8 @@ interface Goal {
     fun getIcon(): ItemStack?
 
     fun getName(): Component
+
+    fun getManager(): GoalManager<*>
 
     companion object {
         @JvmField

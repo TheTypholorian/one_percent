@@ -3,9 +3,9 @@ package net.typho.one_percent.mixin.goals;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.typho.one_percent.session.sync.ClientboundSyncSessionPacket;
 import net.typho.one_percent.session.Session;
 import net.typho.one_percent.session.SessionStorage;
+import net.typho.one_percent.session.sync.ClientboundSyncSessionPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,13 +27,16 @@ public class ServerPlayerMixin {
     )
     private void tick(CallbackInfo ci) {
         Player player = (Player) (Object) this;
-        Session session = ((SessionStorage) server.getWorldData()).one_percent$getSession();
+        SessionStorage storage = (SessionStorage) server.getWorldData();
+        Session session = storage.one_percent$getSession();
 
         if (session != null) {
             if (session.goal.test(player)) {
-                session.end(player, server);
-                ((SessionStorage) server.getWorldData()).one_percent$setSession(null);
-                server.getPlayerList().broadcastAll(new ClientboundSyncSessionPacket(Optional.empty()));
+                if (session.win(player, server)) {
+                    storage.one_percent$setSession(null);
+                }
+
+                server.getPlayerList().broadcastAll(new ClientboundSyncSessionPacket(Optional.ofNullable(storage.one_percent$getSession())));
             }
         }
     }
