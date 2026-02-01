@@ -4,7 +4,10 @@
   "package": "net.typho.one_percent.mixin.fabric",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "qol.ConcentricRingsStructurePlacementMixin",
+    "qol.RandomSpreadStructurePlacementMixin"
+  ],
   "client": [],
   "server": [],
   "injectors": {

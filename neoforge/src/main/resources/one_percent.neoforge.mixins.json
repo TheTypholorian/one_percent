@@ -3,7 +3,10 @@
   "minVersion": "0.8",
   "package": "net.typho.one_percent.mixin.neoforge",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "ConcentricRingsStructurePlacementMixin",
+    "RandomSpreadStructurePlacementMixin"
+  ],
   "client": [],
   "server": [],
   "injectors": {
