@@ -21,6 +21,7 @@ object ItemGoalManager : GoalManager<ItemGoal> {
                 .filter { item -> item !is PotionItem }
                 .filter { item -> item !is TippedArrowItem }
                 .filter { item -> !MusicDiscGoal.test(item.defaultInstance) }
+                .filter { item -> !BannerPatternGoal.test(item.defaultInstance) }
                 .filter { item -> !PotterySherdGoal.test(item.defaultInstance) }
                 .map<ItemGoal>(::SingleItemGoal)
                 .toList()
@@ -35,6 +36,7 @@ object ItemGoalManager : GoalManager<ItemGoal> {
         }
 
         goals.add(MusicDiscGoal)
+        goals.add(BannerPatternGoal)
         goals.add(PotterySherdGoal)
 
         goals.removeAll(alreadyPicked.toSet())
@@ -45,6 +47,8 @@ object ItemGoalManager : GoalManager<ItemGoal> {
     fun itemToGoal(stack: ItemStack): ItemGoal {
         return if (MusicDiscGoal.test(stack)) {
             MusicDiscGoal
+        } else if (BannerPatternGoal.test(stack)) {
+            BannerPatternGoal
         } else if (PotterySherdGoal.test(stack)) {
             PotterySherdGoal
         } else {

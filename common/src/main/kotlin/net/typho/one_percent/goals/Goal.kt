@@ -46,6 +46,9 @@ interface Goal {
             CODEC_MAP[MusicDiscGoal.type()] = MapCodec.unit(MusicDiscGoal)
             STREAM_CODEC_MAP[MusicDiscGoal.type()] = StreamCodec.unit(MusicDiscGoal)
 
+            CODEC_MAP[BannerPatternGoal.type()] = MapCodec.unit(BannerPatternGoal)
+            STREAM_CODEC_MAP[BannerPatternGoal.type()] = StreamCodec.unit(BannerPatternGoal)
+
             CODEC_MAP[PotterySherdGoal.type()] = MapCodec.unit(PotterySherdGoal)
             STREAM_CODEC_MAP[PotterySherdGoal.type()] = StreamCodec.unit(PotterySherdGoal)
         }
